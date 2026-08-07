@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NRL Signal</title>
+<title>Signal</title>
 <style>
 :root {
-  --bg: #FAF7F2; --ink: #1A1A1A; --card: #ffffff; --border: #E5DFD3;
-  --accent: #0F5132; --muted: #7A756B; --disagree: #B8860B;
+  --bg: #FFFFFF; --ink: #000000; --card: #F5F5F5; --border: #CCCCCC;
+  --accent: #006400; --muted: #444444; --disagree: #8B4513;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #12151C; --ink: #EDEBE6; --card: #1A1E27; --border: #2A2F3A;
-    --accent: #2ECC71; --muted: #9A968D; --disagree: #E0A526;
+    --bg: #000000; --ink: #FFFFFF; --card: #1C1C1C; --border: #444444;
+    --accent: #00FF00; --muted: #CCCCCC; --disagree: #FFA500;
   }
 }
 * { box-sizing: border-box; }
@@ -23,6 +23,15 @@ body {
 }
 h1 { font-size: 1.3rem; margin: 4px 0 16px; }
 h2 { font-size: 1rem; margin: 24px 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.tab-btn {
+  flex: 1; padding: 12px; border-radius: 16px; border: 1px solid var(--border);
+  background: var(--card); color: var(--ink); font-size: 1rem; font-weight: 700;
+  text-align: center; cursor: pointer;
+}
+.tab-btn.active { border-color: var(--accent); color: var(--accent); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
 .agree-card {
   background: var(--card); border: 1px solid var(--border); border-radius: 16px;
   padding: 12px 16px; margin-bottom: 10px;
@@ -54,20 +63,26 @@ h2 { font-size: 1rem; margin: 24px 0 10px; color: var(--muted); text-transform: 
 </style>
 </head>
 <body>
-<h1>NRL Signal</h1>
-<div class="updated">Updated 07 Aug 2026, 10:00 UTC</div>
+<h1>Signal</h1>
+<div class="updated">Updated 07 Aug 2026, 13:10 UTC</div>
 
+<div class="tabs">
+  <div class="tab-btn active" data-tab="nrl">NRL</div>
+  <div class="tab-btn" data-tab="afl">AFL</div>
+</div>
+
+<div class="tab-panel active" id="panel-nrl">
 <h2>Agreed Picks</h2>
 
       <div class="agree-card">
         <div class="agree-match">Dolphins v Broncos<span class="agree-date">Sat 08 Aug, 01:30 PM GMT+6</span></div>
         <div class="agree-line"><span class="market-tag">H2H</span> Dolphins
-          <span class="odds">($1.42 / $1.41)</span></div>
+          <span class="odds">($1.42 / $1.38)</span></div>
       </div>
 
       <div class="agree-card">
         <div class="agree-match">Dolphins v Broncos<span class="agree-date">Sat 08 Aug, 01:30 PM GMT+6</span></div>
-        <div class="agree-line"><span class="market-tag">Line</span> Dolphins -7.5
+        <div class="agree-line"><span class="market-tag">Line</span> Dolphins -8.5
           <span class="odds">($1.91 / $1.91)</span></div>
       </div>
 
@@ -78,37 +93,30 @@ h2 { font-size: 1rem; margin: 24px 0 10px; color: var(--muted); text-transform: 
       </div>
 
       <div class="agree-card">
-        <div class="agree-match">Rabbitohs v Eels<span class="agree-date">Sat 08 Aug, 03:35 PM GMT+6</span></div>
-        <div class="agree-line"><span class="market-tag">Line</span> Eels +11.5
-          <span class="odds">($1.91 / $1.95)</span></div>
-      </div>
-
-      <div class="agree-card">
         <div class="agree-match">Raiders v Knights<span class="agree-date">Sun 09 Aug, 10:00 AM GMT+6</span></div>
         <div class="agree-line"><span class="market-tag">H2H</span> Raiders
           <span class="odds">($1.84 / $1.87)</span></div>
       </div>
-
 <h2>All Matches</h2>
 
       <div class="match-block">
         <div class="match-head">Storm v Sea Eagles<span class="match-meta">Sat 08 Aug, 11:00 AM GMT+6 · HBF Park</span></div>
-        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Manly ($1.68)</span><span class="mkt-a">Alphr: Sea Eagles ($1.72)</span></div>
+        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Manly ($1.67)</span><span class="mkt-a">Alphr: Sea Eagles ($1.72)</span></div>
 <div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: Storm +2.5 ($1.91)</span><span class="mkt-a">Alphr: Sea Eagles ($1.91)</span></div>
-<div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Over 47.5 ($1.91)</span><span class="mkt-a">Alphr: Under 47.5 ($1.91)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Over 46.5 ($1.91)</span><span class="mkt-a">Alphr: Under 46.5 ($1.91)</span></div>
       </div>
 
       <div class="match-block">
         <div class="match-head">Dolphins v Broncos<span class="match-meta">Sat 08 Aug, 01:30 PM GMT+6 · Suncorp Stadium</span></div>
-        <div class="mkt-row agree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Dolphins ($1.41)</span><span class="mkt-a">Alphr: Dolphins ($1.42)</span></div>
-<div class="mkt-row agree"><span class="mkt-label">Line</span><span class="mkt-si">SI: Dolphins -7.5 ($1.91)</span><span class="mkt-a">Alphr: Dolphins -7.5 ($1.91)</span></div>
+        <div class="mkt-row agree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Dolphins ($1.38)</span><span class="mkt-a">Alphr: Dolphins ($1.42)</span></div>
+<div class="mkt-row agree"><span class="mkt-label">Line</span><span class="mkt-si">SI: Dolphins -8.5 ($1.91)</span><span class="mkt-a">Alphr: Dolphins -8.5 ($1.91)</span></div>
 <div class="mkt-row agree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Under 48.5 ($1.91)</span><span class="mkt-a">Alphr: Under 48.5 ($1.91)</span></div>
       </div>
 
       <div class="match-block">
         <div class="match-head">Rabbitohs v Eels<span class="match-meta">Sat 08 Aug, 03:35 PM GMT+6 · Allianz Stadium</span></div>
-        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Souths ($1.32)</span><span class="mkt-a">Alphr: Rabbitohs ($1.37)</span></div>
-<div class="mkt-row agree"><span class="mkt-label">Line</span><span class="mkt-si">SI: Eels +11.5 ($1.95)</span><span class="mkt-a">Alphr: Eels +11.5 ($1.91)</span></div>
+        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Souths ($1.34)</span><span class="mkt-a">Alphr: Rabbitohs ($1.37)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: Souths -10.5 ($1.95)</span><span class="mkt-a">Alphr: Eels ($1.91)</span></div>
 <div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Under 45.5 ($1.91)</span><span class="mkt-a">Alphr: Over 45.5 ($1.91)</span></div>
       </div>
 
@@ -128,10 +136,132 @@ h2 { font-size: 1rem; margin: 24px 0 10px; color: var(--muted); text-transform: 
 
       <div class="match-block">
         <div class="match-head">St George v Sharks<span class="match-meta">Sun 09 Aug, 12:05 PM GMT+6 · Jubilee Park</span></div>
-        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Sharks ($1.16)</span><span class="mkt-a">Alphr: —</span></div>
-<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: Sharks -15.5 ($1.91)</span><span class="mkt-a">Alphr: —</span></div>
+        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Sharks ($1.17)</span><span class="mkt-a">Alphr: —</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: St George +15.5 ($1.95)</span><span class="mkt-a">Alphr: —</span></div>
 <div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Under 49.5 ($1.91)</span><span class="mkt-a">Alphr: —</span></div>
       </div>
+</div>
 
+<div class="tab-panel" id="panel-afl">
+<h2>Agreed Picks</h2>
+
+      <div class="agree-card">
+        <div class="agree-match">Melbourne v Fremantle<span class="agree-date">Sat 08 Aug, 09:15 AM GMT+6</span></div>
+        <div class="agree-line"><span class="market-tag">H2H</span> Fremantle
+          <span class="odds">($1.55 / $1.56)</span></div>
+      </div>
+
+      <div class="agree-card">
+        <div class="agree-match">Melbourne v Fremantle<span class="agree-date">Sat 08 Aug, 09:15 AM GMT+6</span></div>
+        <div class="agree-line"><span class="market-tag">Line</span> Melbourne +10.5
+          <span class="odds">($1.89 / $1.91)</span></div>
+      </div>
+
+      <div class="agree-card">
+        <div class="agree-match">Melbourne v Fremantle<span class="agree-date">Sat 08 Aug, 09:15 AM GMT+6</span></div>
+        <div class="agree-line"><span class="market-tag">Total</span> Under 173.5
+          <span class="odds">($1.88 / $1.91)</span></div>
+      </div>
+
+      <div class="agree-card">
+        <div class="agree-match">Adelaide Crows v Richmond<span class="agree-date">Sat 08 Aug, 03:35 PM GMT+6</span></div>
+        <div class="agree-line"><span class="market-tag">Total</span> Over 157.5
+          <span class="odds">($1.89 / $1.91)</span></div>
+      </div>
+
+      <div class="agree-card">
+        <div class="agree-match">St Kilda v Carlton<span class="agree-date">Sun 09 Aug, 03:20 PM GMT+6</span></div>
+        <div class="agree-line"><span class="market-tag">H2H</span> Carlton
+          <span class="odds">($1.65 / $1.72)</span></div>
+      </div>
+
+      <div class="agree-card">
+        <div class="agree-match">St Kilda v Carlton<span class="agree-date">Sun 09 Aug, 03:20 PM GMT+6</span></div>
+        <div class="agree-line"><span class="market-tag">Total</span> Under 175.5
+          <span class="odds">($1.90 / $1.91)</span></div>
+      </div>
+<h2>All Matches</h2>
+
+      <div class="match-block">
+        <div class="match-head">Melbourne v Fremantle<span class="match-meta">Sat 08 Aug, 09:15 AM GMT+6 · MCG</span></div>
+        <div class="mkt-row agree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Fremantle ($1.56)</span><span class="mkt-a">Alphr: Fremantle ($1.55)</span></div>
+<div class="mkt-row agree"><span class="mkt-label">Line</span><span class="mkt-si">SI: Melbourne +10.5 ($1.91)</span><span class="mkt-a">Alphr: Melbourne +10.5 ($1.89)</span></div>
+<div class="mkt-row agree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Under 173.5 ($1.91)</span><span class="mkt-a">Alphr: Under 173.5 ($1.88)</span></div>
+      </div>
+
+      <div class="match-block">
+        <div class="match-head">Sydney Swans v Port Adelaide<span class="match-meta">Sat 08 Aug, 12:15 PM GMT+6 · SCG</span></div>
+        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: —</span><span class="mkt-a">Alphr: Sydney Swans ($1.12)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: —</span><span class="mkt-a">Alphr: Sydney Swans ($1.89)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: —</span><span class="mkt-a">Alphr: Under ($1.90)</span></div>
+      </div>
+
+      <div class="match-block">
+        <div class="match-head">Sydney v P Adelaide<span class="match-meta">Sat 08 Aug, 12:15 PM GMT+6 · Sydney Cricket Ground</span></div>
+        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Sydney ($1.11)</span><span class="mkt-a">Alphr: —</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: P Adelaide +39.5 ($1.91)</span><span class="mkt-a">Alphr: —</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Under 176.5 ($1.91)</span><span class="mkt-a">Alphr: —</span></div>
+      </div>
+
+      <div class="match-block">
+        <div class="match-head">Geelong Cats v Essendon<span class="match-meta">Sat 08 Aug, 12:35 PM GMT+6 · GMHBA Stadium</span></div>
+        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Geelong ($1.01)</span><span class="mkt-a">Alphr: Geelong Cats ($1.01)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: Geelong -64.5 ($1.91)</span><span class="mkt-a">Alphr: Essendon ($1.91)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Over 183.5 ($1.91)</span><span class="mkt-a">Alphr: Under 183.5 ($1.89)</span></div>
+      </div>
+
+      <div class="match-block">
+        <div class="match-head">Adelaide Crows v Richmond<span class="match-meta">Sat 08 Aug, 03:35 PM GMT+6 · Adelaide Oval</span></div>
+        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Adelaide ($1.04)</span><span class="mkt-a">Alphr: Adelaide Crows ($1.02)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: Adelaide -55.5 ($1.91)</span><span class="mkt-a">Alphr: Adelaide Crows ($1.90)</span></div>
+<div class="mkt-row agree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Over 157.5 ($1.91)</span><span class="mkt-a">Alphr: Over 157.5 ($1.89)</span></div>
+      </div>
+
+      <div class="match-block">
+        <div class="match-head">GWS GIANTS v Gold Coast SUNS<span class="match-meta">Sun 09 Aug, 09:10 AM GMT+6 · Corroboree Group Oval Manuka</span></div>
+        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: —</span><span class="mkt-a">Alphr: GWS GIANTS ($1.34)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: —</span><span class="mkt-a">Alphr: GWS GIANTS ($1.90)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: —</span><span class="mkt-a">Alphr: Over ($1.89)</span></div>
+      </div>
+
+      <div class="match-block">
+        <div class="match-head">GWS v Gold Coast<span class="match-meta">Sun 09 Aug, 09:10 AM GMT+6 · Manuka Oval</span></div>
+        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: GWS ($1.40)</span><span class="mkt-a">Alphr: —</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: GWS -16.5 ($1.91)</span><span class="mkt-a">Alphr: —</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Over 144.5 ($1.91)</span><span class="mkt-a">Alphr: —</span></div>
+      </div>
+
+      <div class="match-block">
+        <div class="match-head">West Coast Eagles v Collingwood<span class="match-meta">Sun 09 Aug, 12:10 PM GMT+6 · Optus Stadium</span></div>
+        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: —</span><span class="mkt-a">Alphr: Collingwood ($1.58)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: —</span><span class="mkt-a">Alphr: Collingwood ($1.92)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: —</span><span class="mkt-a">Alphr: Under ($1.89)</span></div>
+      </div>
+
+      <div class="match-block">
+        <div class="match-head">West Coast v Collingwood<span class="match-meta">Sun 09 Aug, 12:10 PM GMT+6 · Optus Stadium</span></div>
+        <div class="mkt-row disagree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Collingwood ($1.62)</span><span class="mkt-a">Alphr: —</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: Collingwood -8.5 ($1.91)</span><span class="mkt-a">Alphr: —</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Under 170.5 ($1.91)</span><span class="mkt-a">Alphr: —</span></div>
+      </div>
+
+      <div class="match-block">
+        <div class="match-head">St Kilda v Carlton<span class="match-meta">Sun 09 Aug, 03:20 PM GMT+6 · Marvel Stadium</span></div>
+        <div class="mkt-row agree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Carlton ($1.72)</span><span class="mkt-a">Alphr: Carlton ($1.65)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Line</span><span class="mkt-si">SI: St Kilda +5.5 ($1.91)</span><span class="mkt-a">Alphr: Carlton ($1.89)</span></div>
+<div class="mkt-row agree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Under 175.5 ($1.91)</span><span class="mkt-a">Alphr: Under 175.5 ($1.90)</span></div>
+      </div>
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+</script>
 </body>
 </html>
