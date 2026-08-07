@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme Test</title>
+<style>
+:root { --bg: #00AA00; }
+@media (prefers-color-scheme: dark) { :root { --bg: #0000FF; } }
+body { background: var(--bg); color: white; font-size: 2rem; padding: 40px; margin: 0; }
+</style>
+</head>
+<body>GREEN = light detected over HTTPS. BLUE = dark detected over HTTPS.</body>
+</html>
