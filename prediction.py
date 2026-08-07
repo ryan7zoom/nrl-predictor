@@ -8,7 +8,7 @@ No separate CSS/JS files — everything inlined so nothing can go missing.
 import json
 import re
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 ALPHR_URL = "https://alphr.com.au/api/predictions/weekly"
 SI_URL = (
@@ -192,18 +192,37 @@ def cross_match(alphr, si):
     return matches
 
 
+def display_pick(mk_key, alphr_pick, si_pick, si_total_line=None):
+    """Build a human-readable pick string with the actual number attached.
+    Alphr's Line/Total markets return only a side ('Titans', 'Over') with
+    no bookmaker number — the real number lives in Stats Insider's data,
+    so use SI's line/total number since these are agreement-only entries."""
+    if mk_key == "h2h":
+        return alphr_pick
+    if mk_key == "line" and si_pick:
+        return si_pick  # e.g. "Titans +5.5"
+    if mk_key == "total":
+        if si_total_line is not None:
+            return f"{alphr_pick} {si_total_line}"  # e.g. "Under 45.5"
+        return alphr_pick
+    return alphr_pick
+
+
 def build_agreed_list(matches):
     agreed = []
     for m in matches:
         for label, key in (("H2H", "h2h"), ("Line", "line"), ("Total", "total")):
             mk = m["markets"][key]
             if mk["agree"]:
+                si_total_line = mk["si"].get("line") if key == "total" else None
+                pick_text = display_pick(key, mk["alphr"]["pick"], mk["si"]["pick"], si_total_line)
                 agreed.append({
                     "match": f"{m['home_team']} v {m['away_team']}",
                     "market": label,
-                    "pick": mk["alphr"]["pick"],
+                    "pick": pick_text,
                     "alphr_odds": mk["alphr"]["odds"],
                     "si_odds": mk["si"]["odds"],
+                    "match_date": m["match_date"],
                 })
     return agreed
 
@@ -220,39 +239,63 @@ def esc(s):
     return "" if s is None else str(s).replace("&", "&amp;").replace("<", "&lt;")
 
 
+def fmt_datetime_gmt6(iso_str):
+    """Render an ISO datetime string in GMT+6."""
+    if not iso_str:
+        return ""
+    try:
+        d = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+        d = d.astimezone(timezone(timedelta(hours=6)))
+        return d.strftime("%a %d %b, %I:%M %p") + " GMT+6"
+    except ValueError:
+        return iso_str
+
+
 def render_agreed_section(agreed):
     if not agreed:
         return '<p class="empty">No agreements this round.</p>'
     rows = []
     for item in agreed:
+        when = fmt_datetime_gmt6(item.get("match_date"))
         rows.append(f'''
       <div class="agree-card">
-        <div class="agree-match">{esc(item['match'])}</div>
+        <div class="agree-match">{esc(item['match'])}<span class="agree-date">{when}</span></div>
         <div class="agree-line"><span class="market-tag">{esc(item['market'])}</span> {esc(item['pick'])}
           <span class="odds">({fmt_odds(item['alphr_odds'])} / {fmt_odds(item['si_odds'])})</span></div>
       </div>''')
     return "\n".join(rows)
 
 
-def render_market_line(label, mk):
+def render_market_line(label, mk, mk_key):
     a = mk["alphr"]
     s = mk["si"]
-    a_txt = f"{esc(a['pick'])} ({fmt_odds(a['odds'])})" if a and a.get("pick") else "—"
-    s_txt = f"{esc(s['pick'])} ({fmt_odds(s['odds'])})" if s and s.get("pick") else "—"
+
+    def side_text(entry, source):
+        if not entry or not entry.get("pick"):
+            return "—"
+        pick = entry["pick"]
+        # Alphr's Total/Line picks are bare side names with no number attached;
+        # borrow SI's numeric line so both rows always show what's being bet.
+        if mk_key == "total":
+            line_val = entry.get("line") if source == "si" else (s.get("line") if s else None)
+            if line_val is not None and not any(c.isdigit() for c in pick):
+                pick = f"{pick} {line_val}"
+        elif mk_key == "line" and source == "alphr":
+            # Alphr gives only the team name; SI's pick has the number for the same team
+            if s and s.get("pick") and pick.lower() in s["pick"].lower():
+                pick = s["pick"]
+        return f"{esc(pick)} ({fmt_odds(entry['odds'])})"
+
+    a_txt = side_text(a, "alphr")
+    s_txt = side_text(s, "si")
     cls = "agree" if mk["agree"] else "disagree"
     return f'<div class="mkt-row {cls}"><span class="mkt-label">{label}</span><span class="mkt-si">SI: {s_txt}</span><span class="mkt-a">Alphr: {a_txt}</span></div>'
 
 
 def render_match_block(m):
-    dt = ""
-    if m["match_date"]:
-        try:
-            d = datetime.fromisoformat(m["match_date"].replace("Z", "+00:00"))
-            dt = d.strftime("%a %d %b, %I:%M %p")
-        except ValueError:
-            dt = m["match_date"]
+    dt = fmt_datetime_gmt6(m["match_date"])
     lines = "\n".join(
-        render_market_line(label, m["markets"][key])
+        render_market_line(label, m["markets"][key], key)
         for label, key in (("H2H", "h2h"), ("Line", "line"), ("Total", "total"))
     )
     venue = f" · {esc(m['venue'])}" if m["venue"] else ""
@@ -292,7 +335,8 @@ h2 {{ font-size: 1rem; margin: 24px 0 10px; color: var(--muted); text-transform:
   background: var(--card); border: 1px solid var(--border); border-radius: 16px;
   padding: 12px 16px; margin-bottom: 10px;
 }}
-.agree-match {{ font-weight: 600; margin-bottom: 4px; }}
+.agree-match {{ font-weight: 600; margin-bottom: 2px; }}
+.agree-date {{ display: block; font-weight: 400; font-size: 0.78rem; color: var(--muted); margin: 2px 0 6px; }}
 .agree-line {{ font-size: 0.95rem; }}
 .market-tag {{
   display: inline-block; background: var(--accent); color: #fff;
