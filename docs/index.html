@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NRL Signal</title>
+<style>
+:root {
+  --bg: #FAF7F2; --ink: #1A1A1A; --card: #ffffff; --border: #E5DFD3;
+  --accent: #0F5132; --muted: #7A756B; --disagree: #B8860B;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12151C; --ink: #EDEBE6; --card: #1A1E27; --border: #2A2F3A;
+    --accent: #2ECC71; --muted: #9A968D; --disagree: #E0A526;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 16px; background: var(--bg); color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  max-width: 720px; margin-left: auto; margin-right: auto;
+}
+h1 { font-size: 1.3rem; margin: 4px 0 16px; }
+h2 { font-size: 1rem; margin: 24px 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.agree-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 12px 16px; margin-bottom: 10px;
+}
+.agree-match { font-weight: 600; margin-bottom: 4px; }
+.agree-line { font-size: 0.95rem; }
+.market-tag {
+  display: inline-block; background: var(--accent); color: #fff;
+  font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 8px; margin-right: 6px;
+}
+.odds { color: var(--muted); font-variant-numeric: tabular-nums; }
+.match-block {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 12px 16px; margin-bottom: 10px;
+}
+.match-head { font-weight: 600; margin-bottom: 8px; }
+.match-meta { display: block; font-weight: 400; font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+.mkt-row {
+  display: flex; flex-wrap: wrap; gap: 6px 10px; font-size: 0.9rem; padding: 4px 0;
+  border-top: 1px solid var(--border);
+}
+.mkt-row:first-of-type { border-top: none; }
+.mkt-label { font-weight: 600; width: 42px; flex-shrink: 0; }
+.mkt-row.agree .mkt-label { color: var(--accent); }
+.mkt-row.disagree .mkt-label { color: var(--disagree); }
+.mkt-si, .mkt-a { font-variant-numeric: tabular-nums; }
+.empty { color: var(--muted); }
+.updated { color: var(--muted); font-size: 0.8rem; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<h1>NRL Signal</h1>
+<div class="updated">Updated 07 Aug 2026, 05:40 UTC</div>
+
+<h2>Agreed Picks</h2>
+
+      <div class="agree-card">
+        <div class="agree-match">Warriors v Panthers</div>
+        <div class="agree-line"><span class="market-tag">H2H</span> Panthers
+          <span class="odds">($1.53 / $1.65)</span></div>
+      </div>
+
+      <div class="agree-card">
+        <div class="agree-match">Warriors v Panthers</div>
+        <div class="agree-line"><span class="market-tag">Line</span> Warriors
+          <span class="odds">($1.91 / $1.91)</span></div>
+      </div>
+
+<h2>All Matches</h2>
+
+      <div class="match-block">
+        <div class="match-head">Warriors v Panthers<span class="match-meta">Fri 07 Aug, 08:00 AM · Go Media Stadium</span></div>
+        <div class="mkt-row agree"><span class="mkt-label">H2H</span><span class="mkt-si">SI: Panthers ($1.65)</span><span class="mkt-a">Alphr: Panthers ($1.53)</span></div>
+<div class="mkt-row agree"><span class="mkt-label">Line</span><span class="mkt-si">SI: Warriors +3.5 ($1.91)</span><span class="mkt-a">Alphr: Warriors ($1.91)</span></div>
+<div class="mkt-row disagree"><span class="mkt-label">Total</span><span class="mkt-si">SI: Under ($1.91)</span><span class="mkt-a">Alphr: Over ($1.91)</span></div>
+      </div>
+
+</body>
+</html>
