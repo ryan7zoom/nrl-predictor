@@ -11,11 +11,16 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 
 ALPHR_URL = "https://alphr.com.au/api/predictions/weekly"
-SI_URL = (
+SI_URL_TEMPLATE = (
     "https://levy-edge.statsinsider.com.au/matches/upcoming"
-    "?Sport=NRL&strip=true&best_bets=true"
+    "?Sport={sport}&strip=true&best_bets=true"
     "&bookmakers=bet365,bluebet,betfair,tab,pointsbet_au"
 )
+
+SPORTS = {
+    "nrl": {"label": "NRL", "alphr_key": "nrl", "si_key": "NRL"},
+    "afl": {"label": "AFL", "alphr_key": "afl", "si_key": "AFL"},
+}
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; nrl-signal-bot/1.0)"}
 
@@ -31,11 +36,22 @@ def fetch_json(url):
 # ---------------------------------------------------------------------------
 
 TEAM_ALIASES = {
+    # NRL
     "titans": "GLD", "cowboys": "NQL", "warriors": "WAR", "panthers": "PEN",
     "roosters": "SYD", "bulldogs": "CBY", "storm": "MEL", "sea eagles": "MAN",
     "dolphins": "DOL", "broncos": "BRI", "rabbitohs": "SOU", "eels": "PAR",
     "raiders": "CAN", "knights": "NEW", "dragons": "SGI", "sharks": "CRO",
     "wests tigers": "WST",
+    # AFL
+    "adelaide": "ADE", "crows": "ADE", "brisbane lions": "BRL", "lions": "BRL",
+    "carlton": "CAR", "blues": "CAR", "collingwood": "COL", "magpies": "COL",
+    "essendon": "ESS", "bombers": "ESS", "fremantle": "FRE", "dockers": "FRE",
+    "geelong": "GEE", "cats": "GEE", "gold coast": "GCS", "suns": "GCS",
+    "gws giants": "GWS", "giants": "GWS", "hawthorn": "HAW", "hawks": "HAW",
+    "melbourne": "MEL2", "demons": "MEL2", "north melbourne": "NTH", "kangaroos": "NTH",
+    "port adelaide": "PTA", "power": "PTA", "richmond": "RIC", "tigers": "RIC",
+    "st kilda": "STK", "saints": "STK", "sydney": "SYD2", "swans": "SYD2",
+    "west coast": "WCE", "eagles": "WCE", "western bulldogs": "WBD",
 }
 
 
@@ -51,11 +67,11 @@ def match_key(home, away):
 # Alphr: pull out H2H / Line(MBand) / Total picks per match
 # ---------------------------------------------------------------------------
 
-def get_alphr_predictions():
+def get_alphr_predictions(sport_key):
     data = fetch_json(ALPHR_URL)
     out = {}
     for sport_block in data.get("sports", []):
-        if sport_block.get("sport") != "nrl":
+        if sport_block.get("sport") != sport_key:
             continue
         for match in sport_block.get("matches", []):
             home, away = match["home_team"], match["away_team"]
@@ -88,12 +104,13 @@ def get_alphr_predictions():
 # filter to NRL client-side (the Sport= query param is ignored server-side)
 # ---------------------------------------------------------------------------
 
-def get_si_predictions():
-    data = fetch_json(SI_URL)
+def get_si_predictions(sport_key):
+    url = SI_URL_TEMPLATE.format(sport=sport_key)
+    data = fetch_json(url)
     out = {}
     for entry in data:
         md = entry.get("MatchData", {})
-        if md.get("Sport") != "NRL":
+        if md.get("Sport") != sport_key:
             continue
         home = md.get("HomeTeam", {}).get("DisplayName") or md.get("HomeTeam", {}).get("Nickname")
         away = md.get("AwayTeam", {}).get("DisplayName") or md.get("AwayTeam", {}).get("Nickname")
@@ -326,16 +343,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NRL Signal</title>
+<title>Signal</title>
 <style>
 :root {{
-  --bg: #FAF7F2; --ink: #1A1A1A; --card: #ffffff; --border: #E5DFD3;
-  --accent: #0F5132; --muted: #7A756B; --disagree: #B8860B;
+  --bg: #FFFFFF; --ink: #000000; --card: #F5F5F5; --border: #CCCCCC;
+  --accent: #006400; --muted: #444444; --disagree: #8B4513;
 }}
 @media (prefers-color-scheme: dark) {{
   :root {{
-    --bg: #12151C; --ink: #EDEBE6; --card: #1A1E27; --border: #2A2F3A;
-    --accent: #2ECC71; --muted: #9A968D; --disagree: #E0A526;
+    --bg: #000000; --ink: #FFFFFF; --card: #1C1C1C; --border: #444444;
+    --accent: #00FF00; --muted: #CCCCCC; --disagree: #FFA500;
   }}
 }}
 * {{ box-sizing: border-box; }}
@@ -346,6 +363,15 @@ body {{
 }}
 h1 {{ font-size: 1.3rem; margin: 4px 0 16px; }}
 h2 {{ font-size: 1rem; margin: 24px 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }}
+.tabs {{ display: flex; gap: 8px; margin-bottom: 16px; }}
+.tab-btn {{
+  flex: 1; padding: 12px; border-radius: 16px; border: 1px solid var(--border);
+  background: var(--card); color: var(--ink); font-size: 1rem; font-weight: 700;
+  text-align: center; cursor: pointer;
+}}
+.tab-btn.active {{ border-color: var(--accent); color: var(--accent); }}
+.tab-panel {{ display: none; }}
+.tab-panel.active {{ display: block; }}
 .agree-card {{
   background: var(--card); border: 1px solid var(--border); border-radius: 16px;
   padding: 12px 16px; margin-bottom: 10px;
@@ -377,46 +403,86 @@ h2 {{ font-size: 1rem; margin: 24px 0 10px; color: var(--muted); text-transform:
 </style>
 </head>
 <body>
-<h1>NRL Signal</h1>
+<h1>Signal</h1>
 <div class="updated">Updated {generated_at}</div>
 
+<div class="tabs">
+  <div class="tab-btn active" data-tab="nrl">NRL</div>
+  <div class="tab-btn" data-tab="afl">AFL</div>
+</div>
+
+<div class="tab-panel active" id="panel-nrl">
 <h2>Agreed Picks</h2>
-{agreed_html}
-
+{nrl_agreed_html}
 <h2>All Matches</h2>
-{matches_html}
+{nrl_matches_html}
+</div>
 
+<div class="tab-panel" id="panel-afl">
+<h2>Agreed Picks</h2>
+{afl_agreed_html}
+<h2>All Matches</h2>
+{afl_matches_html}
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(function(btn) {{
+  btn.addEventListener('click', function() {{
+    document.querySelectorAll('.tab-btn').forEach(function(b) {{ b.classList.remove('active'); }});
+    document.querySelectorAll('.tab-panel').forEach(function(p) {{ p.classList.remove('active'); }});
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  }});
+}});
+</script>
 </body>
 </html>
 """
 
 
-def render_html(matches, agreed):
-    generated_at = datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC")
+def render_sport_section(matches, agreed):
     agreed_html = render_agreed_section(agreed)
     matches_html = "\n".join(render_match_block(m) for m in matches)
+    return agreed_html, matches_html
+
+
+def render_html(nrl_matches, nrl_agreed, afl_matches, afl_agreed):
+    generated_at = datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC")
+    nrl_agreed_html, nrl_matches_html = render_sport_section(nrl_matches, nrl_agreed)
+    afl_agreed_html, afl_matches_html = render_sport_section(afl_matches, afl_agreed)
     return HTML_TEMPLATE.format(
-        generated_at=generated_at, agreed_html=agreed_html, matches_html=matches_html,
+        generated_at=generated_at,
+        nrl_agreed_html=nrl_agreed_html, nrl_matches_html=nrl_matches_html,
+        afl_agreed_html=afl_agreed_html, afl_matches_html=afl_matches_html,
     )
 
 
-def main():
-    print("Fetching Alphr predictions...")
-    alphr = get_alphr_predictions()
-    print(f"  {len(alphr)} NRL matches from Alphr")
-
-    print("Fetching Stats Insider predictions...")
-    si = get_si_predictions()
-    print(f"  {len(si)} NRL matches from Stats Insider")
-
+def fetch_and_process(sport_key):
+    cfg = SPORTS[sport_key]
+    alphr = get_alphr_predictions(cfg["alphr_key"])
+    si = get_si_predictions(cfg["si_key"])
     matches = cross_match(alphr, si)
     agreed = build_agreed_list(matches)
-    print(f"Cross-matched {len(matches)} matches, {len(agreed)} agreed picks")
+    return matches, agreed, len(alphr), len(si)
 
-    html = render_html(matches, agreed)
+
+def main():
+    print("Fetching NRL...")
+    nrl_matches, nrl_agreed, nrl_a_count, nrl_s_count = fetch_and_process("nrl")
+    print(f"  Alphr: {nrl_a_count}, Stats Insider: {nrl_s_count}, cross-matched: {len(nrl_matches)}, agreed: {len(nrl_agreed)}")
+
+    print("Fetching AFL...")
+    afl_matches, afl_agreed, afl_a_count, afl_s_count = fetch_and_process("afl")
+    print(f"  Alphr: {afl_a_count}, Stats Insider: {afl_s_count}, cross-matched: {len(afl_matches)}, agreed: {len(afl_agreed)}")
+
+    html = render_html(nrl_matches, nrl_agreed, afl_matches, afl_agreed)
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("Wrote docs/index.html")
+
+
+if __name__ == "__main__":
+    main()
 
 
 if __name__ == "__main__":
