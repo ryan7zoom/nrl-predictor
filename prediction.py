@@ -164,9 +164,21 @@ def pick_side(pick_str, home, away):
     return p
 
 
+def is_upcoming(match_date_iso, now):
+    """True if the match hasn't started yet (or has no date, kept to be safe)."""
+    if not match_date_iso:
+        return True
+    try:
+        d = datetime.fromisoformat(match_date_iso.replace("Z", "+00:00"))
+        return d > now
+    except ValueError:
+        return True
+
+
 def cross_match(alphr, si):
     all_keys = sorted(set(alphr) | set(si))
     matches = []
+    now = datetime.now(timezone.utc)
     for key in all_keys:
         a = alphr.get(key)
         s = si.get(key)
@@ -174,6 +186,9 @@ def cross_match(alphr, si):
         away = (a or s)["away_team"]
         venue = (a or {}).get("venue") or (s or {}).get("venue")
         match_date = (a or {}).get("match_date") or (s or {}).get("match_date")
+
+        if not is_upcoming(match_date, now):
+            continue
 
         markets = {}
         for m in ("h2h", "line", "total"):
@@ -339,8 +354,7 @@ h2 {{ font-size: 1rem; margin: 24px 0 10px; color: var(--muted); text-transform:
 .agree-date {{ display: block; font-weight: 400; font-size: 0.78rem; color: var(--muted); margin: 2px 0 6px; }}
 .agree-line {{ font-size: 0.95rem; }}
 .market-tag {{
-  display: inline-block; background: var(--accent); color: #fff;
-  font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 8px; margin-right: 6px;
+  display: inline-block; font-size: 0.8rem; font-weight: 600; color: var(--accent); margin-right: 6px;
 }}
 .odds {{ color: var(--muted); font-variant-numeric: tabular-nums; }}
 .match-block {{
